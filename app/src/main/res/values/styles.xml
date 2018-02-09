@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CodeFont" parent="AppTheme">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingTop">10dp</item>
+    </style>
+
 </resources>

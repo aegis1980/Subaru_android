@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="3dp"
+    android:layout_marginRight="3dp"
+    android:stretchColumns="1">
+    <TableRow>
+        <TextView
+            android:text="INFO:"
+            android:textStyle="bold"
+            android:padding="3dp" />
+        <TextView
+            android:text="Not assigned"
+            android:padding="6dp" />
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:text="MENU:"
+            android:textStyle="bold"
+            android:padding="3dp" />
+        <TextView
+            android:text="Android home"
+            android:padding="6dp" />
+    </TableRow>
+
+
+    <TableRow>
+        <TextView
+            android:text="MAP:"
+            android:textStyle="bold"
+            android:padding="3dp" />
+        <TextView
+            android:text="Not assigned"
+            android:padding="6dp" />
+    </TableRow>
+
+
+    <TableRow>
+        <TextView
+            android:text="A/V:"
+            android:textStyle="bold"
+            android:padding="3dp" />
+        <TextView
+            android:text="Not assigned"
+            android:padding="6dp" />
+    </TableRow>
+
+
+    <TableRow>
+        <TextView
+            android:text="MEDIA:"
+            android:textStyle="bold"
+            android:padding="3dip" />
+        <TextView
+            android:text="Not assigned"
+
+            android:padding="3dp" />
+    </TableRow>
+</TableLayout>

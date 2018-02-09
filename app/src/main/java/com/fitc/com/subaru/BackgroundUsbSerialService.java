@@ -3,6 +3,8 @@ package com.fitc.com.subaru;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Handler;
@@ -13,17 +15,15 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.hoho.android.usbserial.driver.UsbSerialDriver;
+import com.google.gson.Gson;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
-import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.HexDump;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
 
 import java.io.IOException;
-import java.util.List;
 
 
-public class BackgroundUsbSerialService extends Service {
+public class BackgroundUsbSerialService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = BackgroundUsbSerialService.class.getSimpleName() ;
 
@@ -72,6 +72,9 @@ public class BackgroundUsbSerialService extends Service {
 
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         mHbp = new HardButtonProcessor(this);
+
+        SharedPreferences sp = getSharedPreferences(Constants.SHARED_PREFS,MODE_PRIVATE);
+        sp.registerOnSharedPreferenceChangeListener(this);
 
 
         // Start up the thread running the service.  Note that we create a
@@ -182,8 +185,6 @@ public class BackgroundUsbSerialService extends Service {
 
         String msg = HexDump.dumpHexString(data);
 
-
-
         if (data.length==1){
             mHbp.processPress(msg.charAt(0));
         }
@@ -213,6 +214,25 @@ public class BackgroundUsbSerialService extends Service {
                 }
             };
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        switch (key){
+            case Constants.AV_BUTTON:
+            case Constants.INFO_BUTTON:
+            case Constants.MAP_BUTTON:
+            case Constants.MENU_BUTTON:
+            case Constants.MEDIA_BUTTON:
+                String json = sharedPreferences.getString(key,null);
+                if (json!=null) {
+                    ResolveInfo ri = new Gson().fromJson(json, ResolveInfo.class);
+                    assignActivitytoHardwareButton(key, ri);
+                }
+        }
+    }
+
+    private void assignActivitytoHardwareButton(String buttonKey,ResolveInfo ri)  {
+        mHbp.loadPresetsFromPrefs();
+    }
 
 
     // Handler that receives messages from the thread
