@@ -8,6 +8,7 @@
 
     <!-- 0x2341 / Arduino -->
     <usb-device vendor-id="9025" />
+    <usb-device vendor-id="2341" product-id="8036"/>
 
     <!-- 0x16C0 / 0x0483: Teensyduino  -->
     <usb-device vendor-id="5824" product-id="1155" />

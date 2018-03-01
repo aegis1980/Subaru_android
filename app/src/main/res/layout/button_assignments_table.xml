@@ -11,7 +11,8 @@
             android:textStyle="bold"
             android:padding="3dp" />
         <TextView
-            android:text="Not assigned"
+            android:id="@+id/tv_info"
+            android:text="@string/not_assigned"
             android:padding="6dp" />
     </TableRow>
 
@@ -21,7 +22,8 @@
             android:textStyle="bold"
             android:padding="3dp" />
         <TextView
-            android:text="Android home"
+            android:id="@+id/tv_menu"
+            android:text="Android home (LOCKED)"
             android:padding="6dp" />
     </TableRow>
 
@@ -32,7 +34,8 @@
             android:textStyle="bold"
             android:padding="3dp" />
         <TextView
-            android:text="Not assigned"
+            android:id="@+id/tv_map"
+            android:text="@string/not_assigned"
             android:padding="6dp" />
     </TableRow>
 
@@ -43,7 +46,8 @@
             android:textStyle="bold"
             android:padding="3dp" />
         <TextView
-            android:text="Not assigned"
+            android:id="@+id/tv_av"
+            android:text="@string/not_assigned"
             android:padding="6dp" />
     </TableRow>
 
@@ -54,8 +58,8 @@
             android:textStyle="bold"
             android:padding="3dip" />
         <TextView
-            android:text="Not assigned"
-
-            android:padding="3dp" />
+            android:id="@+id/tv_media"
+            android:text="@string/not_assigned"
+            android:padding="6dp" />
     </TableRow>
 </TableLayout>

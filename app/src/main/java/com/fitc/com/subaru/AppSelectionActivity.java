@@ -22,14 +22,21 @@ import static android.content.ContentValues.TAG;
 
 public class AppSelectionActivity extends ListActivity {
 
-    private static final boolean LOGGING =  false;
-    public static final String EXTRA_APP_INFO = "com.fitc.extraappinfo";
+    private static final boolean LOGGING =  true;
     private ArrayList<ResolveInfo> mResolveInfo;
     private ArrayAdapter<ResolveInfo> mAdapter;
+    private String mIntentFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent startIntent  = getIntent();
+        if (startIntent!=null){
+            if (startIntent.hasExtra("intent-filter")) {
+                mIntentFilter = startIntent.getStringExtra("intent-filter");
+            }
+        }
 
         mResolveInfo = new ArrayList<>();
 
@@ -53,7 +60,6 @@ public class AppSelectionActivity extends ListActivity {
 
 
                 row.getText1().setText(name);
-
 
                 row.getText2().setText(pkg);
 
@@ -81,23 +87,29 @@ public class AppSelectionActivity extends ListActivity {
 
                 // Create intent to deliver some kind of result data
                 Intent result = new Intent("com.example.RESULT_ACTION");
-                result.putExtra(EXTRA_APP_INFO, ri);
+                result.putExtra(Constants.EXTRA_RESULT_DATA1, ri);
                 setResult(Activity.RESULT_OK, result);
                 finish();
 
             }
         });
 
+        new UpdateDevicesTask().execute(new String[]{mIntentFilter});
     }
 
 
-    private class UpdateDevicesTask extends AsyncTask<Void, Void, List<ResolveInfo>> {
+    private class UpdateDevicesTask extends AsyncTask<String, Void, List<ResolveInfo>> {
         @Override
-        protected List<ResolveInfo> doInBackground(Void... params) {
+        protected List<ResolveInfo> doInBackground(String... params) {
+
+
             if (LOGGING) Log.d(TAG, "Refreshing app list ...");
 
             Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
             mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+
+
             List<ResolveInfo> result = AppSelectionActivity.this.getPackageManager().queryIntentActivities( mainIntent, 0);
 
 

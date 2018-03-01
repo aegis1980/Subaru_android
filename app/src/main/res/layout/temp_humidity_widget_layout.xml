@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/widget_margin"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@android:color/transparent">
+
+        <TextView
+            android:id="@+id/widgettv_temperature"
+            android:text="20"
+            android:textColor="@android:color/white"
+            android:textSize="50sp"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+        <TextView
+            android:text="\u00B0C"
+            android:id="@+id/c"
+            android:textColor="@android:color/white"
+            android:layout_alignBaseline="@+id/widgettv_temperature"
+            android:layout_toRightOf="@id/widgettv_temperature"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+        <TextView
+            android:id="@+id/widgettv_humidity"
+            android:text="54"
+            android:layout_marginLeft="10dp"
+            android:textSize="50sp"
+            android:textColor="@android:color/white"
+            android:textAlignment="center"
+            android:layout_alignBaseline="@+id/c"
+            android:layout_toRightOf="@id/c"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:text="%"
+            android:layout_width="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/widgettv_humidity"
+            android:layout_toRightOf="@id/widgettv_humidity"/>
+
+    </RelativeLayout>
+</FrameLayout>

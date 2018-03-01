@@ -31,6 +31,7 @@
 
             <Button
                 android:id="@+id/info_button"
+                android:tag="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="setHardwareButton"
@@ -38,6 +39,7 @@
 
             <Button
                 android:id="@+id/menu_button"
+                android:tag="2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:enabled="false"
@@ -46,6 +48,7 @@
 
             <Button
                 android:id="@+id/map_button"
+                android:tag="3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="setHardwareButton"
@@ -53,6 +56,7 @@
 
             <Button
                 android:id="@+id/av_button"
+                android:tag="4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="setHardwareButton"
@@ -60,6 +64,7 @@
 
             <Button
                 android:id="@+id/media_button"
+                android:tag="5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="setHardwareButton"
@@ -91,7 +96,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:onClick="setupSerialConnection"
             android:text="SELECT DEVICE" />
+
+        <include
+            layout="@layout/serial_assignment"></include>
 
 
         <TextView
@@ -104,6 +113,17 @@
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="@android:color/darker_gray" />
+
+        <Button
+            android:tag="6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="setHardwareButton"
+            android:text="SELECT CAMERA APP" />
+
+        <include
+            layout="@layout/camera_assignment"></include>
 
 
     </LinearLayout>

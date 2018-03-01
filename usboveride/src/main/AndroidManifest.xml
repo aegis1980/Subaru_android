@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.fitc.com.usboveride">
+
+    <uses-permission android:name="android.permission.MANAGE_USB" />
+
+</manifest>
+
+

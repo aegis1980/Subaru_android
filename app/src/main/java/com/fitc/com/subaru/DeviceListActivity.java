@@ -23,6 +23,7 @@ package com.fitc.com.subaru;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
@@ -141,7 +142,17 @@ public class DeviceListActivity extends Activity {
 
                 final UsbSerialPort port = mEntries.get(position);
                 //showConsoleActivity(port);
-                startBackGroundService(port);
+
+
+                Intent result = new Intent("com.example.RESULT_ACTION");
+
+                UsbDevice device = port.getDriver().getDevice();
+                String name = port.getClass().getSimpleName();
+
+                result.putExtra(Constants.EXTRA_RESULT_DATA1, device);
+                result.putExtra(Constants.EXTRA_RESULT_DATA2, name);
+                setResult(Activity.RESULT_OK, result);
+
                 finish();
             }
         });
@@ -174,13 +185,6 @@ public class DeviceListActivity extends Activity {
         mProgressBar.setVisibility(View.INVISIBLE);
     }
 
-    private void showConsoleActivity(UsbSerialPort port) {
-        SerialConsoleActivity.show(this, port);
-    }
-
-    private void startBackGroundService(UsbSerialPort port){
-        BackgroundUsbSerialService.start(this, port);
-    }
 
 
 
