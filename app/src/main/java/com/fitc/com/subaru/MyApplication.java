@@ -19,8 +19,8 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        SingleIncomingCharManager hardButtonHelper = SingleIncomingCharManager.getInstance(this);
-        UsbDeviceHelper usbManager = UsbDeviceHelper.getInstance(this);
+        HardwareManager.getInstance(this);
+        UsbDeviceHelper.getInstance(this);
 
     }
 
@@ -33,4 +33,6 @@ public class MyApplication extends Application {
     public void onTerminate() {
         super.onTerminate();
     }
+
+
 }

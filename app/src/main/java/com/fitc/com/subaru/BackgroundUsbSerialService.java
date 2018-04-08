@@ -49,6 +49,10 @@ public class BackgroundUsbSerialService extends Service  {
     Messages to the Sevrice handler.
      */
     private static final int CONNECT_TO_USB = 11;
+    private static final int INCOMING_DATA= 12;
+
+
+
     private static final char END_OF_MESSAGE = '#';
 
     /**
@@ -70,7 +74,7 @@ public class BackgroundUsbSerialService extends Service  {
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
 
-    private SingleIncomingCharManager mSingleIncomingCharMgr;
+    private HardwareManager mHardwareMgr;
     private TempHumidityManager mTempPressureMgr;
 
 
@@ -97,7 +101,7 @@ public class BackgroundUsbSerialService extends Service  {
     public void onCreate() {
 
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        mSingleIncomingCharMgr = SingleIncomingCharManager.getInstance(this);
+        mHardwareMgr = HardwareManager.getInstance(this);
         mTempPressureMgr = TempHumidityManager.getInstance(this);
 
         mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
@@ -124,7 +128,6 @@ public class BackgroundUsbSerialService extends Service  {
         startForeground(FOREGROUND_ID,
                 buildForegroundNotification());
 
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
 
         mDeviceName = UsbDeviceHelper.getInstance(this).getDeviceName();
 
@@ -227,18 +230,13 @@ public class BackgroundUsbSerialService extends Service  {
 
     private void processIncomingData(byte[] data) {
 
-        boolean containsEndofMessage = false;
 
         for (byte b:data){
             char c = (char) b;
-            if (c == END_OF_MESSAGE){
-                containsEndofMessage = true;
-            }
             if (LOGGING) Log.d(TAG,""+c);
             mSerialDataBuffer.add(c);
         }
 
-        if (containsEndofMessage){
 
             ArrayList<Character> payload = new ArrayList<>();
 
@@ -254,7 +252,7 @@ public class BackgroundUsbSerialService extends Service  {
                } else {
                    break;
                }
-            }
+
 
             if (LOGGING) Log.d(TAG,"payload size:" + payload.size());
 
@@ -267,7 +265,7 @@ public class BackgroundUsbSerialService extends Service  {
                 }
 
                 if (chars.length==1){
-                    mSingleIncomingCharMgr.processChar(chars[0]);
+                    mHardwareMgr.processChar(chars[0]);
                 } else {
                     mTempPressureMgr.process(chars);
                 }
@@ -306,11 +304,16 @@ public class BackgroundUsbSerialService extends Service  {
 
                 @Override
                 public void onNewData(final byte[] data) {
-                    //Log.d(TAG,"Incoming data" + data);
-                    processIncomingData(data);
+
+
+                    Message msg = mServiceHandler.obtainMessage();
+                   // msg.arg1 = startId;
+                    msg.arg2 = INCOMING_DATA;
+                    msg.obj = data;
+                    mServiceHandler.sendMessage(msg);
+
                 }
             };
-
 
 
 
@@ -331,6 +334,9 @@ public class BackgroundUsbSerialService extends Service  {
                 case CONNECT_TO_USB:
                     resumeUsbSerialConnection(msg.arg1);
                     break;
+                case INCOMING_DATA:
+                    byte[] data = (byte[]) msg.obj;
+                    processIncomingData(data);
 
             }
 

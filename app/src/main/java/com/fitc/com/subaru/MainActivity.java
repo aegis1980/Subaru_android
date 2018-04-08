@@ -160,7 +160,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sp, String s) {
 
-        SingleIncomingCharManager hbh = SingleIncomingCharManager.getInstance(this);
+        HardwareManager hbh = HardwareManager.getInstance(this);
         UsbDeviceHelper usm = UsbDeviceHelper.getInstance(this);
         String na = getString(R.string.not_assigned);
 
@@ -233,7 +233,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     mMenuTv.setTextColor(SELECTED_START_APP_COLOUR);
                     // this is the default anyway - do not need to change anything.
                 } else {
-                   ResolveInfo ri = SingleIncomingCharManager.getInstance(this).getAssignedActivity(button);
+                   ResolveInfo ri = HardwareManager.getInstance(this).getAssignedActivity(button);
                     if (ri!=null){
                         switch (button){
                             case Constants.INFO_BUTTON:

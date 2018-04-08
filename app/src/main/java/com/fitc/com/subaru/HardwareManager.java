@@ -1,6 +1,5 @@
 package com.fitc.com.subaru;
 
-import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,18 +10,18 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
-import java.util.List;
 
 
 /**
  * Created by jon robinson on 6/02/2018.
  * Processes serial inputs from connected arduino corresponding to the 5 hardware buttons in the centre dash
+ * And reverse from car socket
  */
 
-public class SingleIncomingCharManager implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class HardwareManager implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 
-    private static final String TAG = SingleIncomingCharManager.class.getSimpleName();
+    private static final String TAG = HardwareManager.class.getSimpleName();
     private static final boolean LOGGING = true;
 
     private static final char INFO = 'i';
@@ -34,35 +33,36 @@ public class SingleIncomingCharManager implements SharedPreferences.OnSharedPref
     private static final char REVERSE = 'r';
     private static final char FORWARDS = 'f';
 
-    private static SingleIncomingCharManager sInstance;
+    private static HardwareManager sInstance;
 
-    HashMap<String, ResolveInfo> mButtonMap = new HashMap<>(5);
-
+    final HashMap<String, ResolveInfo> mButtonMap = new HashMap<>(5);
 
     private final Context mContext;
 
     /**
-     * if set, this is what is loaded up on boot, by {@link AutostartBroadcastReceiver}
+     * if set, this is what is loaded up on boot, by {@link BootCompletedBroadcastReceiver}
      */
     private ResolveInfo mDefaultOnBoot;
     private ComponentName mActivityToRestore;
-    private boolean mCameraActive = false;
+    //private boolean mCameraActive = false;
+    private String mActiveApp;
 
     /**
      * Getter of singleton
      * @param c
      * @return
      */
-    public static SingleIncomingCharManager getInstance(Context c){
+    public static HardwareManager getInstance(Context c){
         if (sInstance == null) {
-            sInstance = new SingleIncomingCharManager(c);
+            sInstance = new HardwareManager(c);
         }
         sInstance.loadPresetsFromPrefs();
         return sInstance;
     }
 
-    private SingleIncomingCharManager(Context context){
+    private HardwareManager(Context context){
         mContext = context;
+
 
         SharedPreferences sharedPref = mContext.getSharedPreferences(Constants.SHARED_PREFS, Context.MODE_PRIVATE);
         sharedPref.registerOnSharedPreferenceChangeListener(this);
@@ -119,40 +119,44 @@ public class SingleIncomingCharManager implements SharedPreferences.OnSharedPref
         
         switch (c){
             case INFO:
-                openPresetApp(mButtonMap.get(Constants.INFO_BUTTON));
+                if (!Constants.INFO_BUTTON.equals(mActiveApp)) {
+                    openPresetApp(mButtonMap.get(Constants.INFO_BUTTON));
+                    mActiveApp= Constants.INFO_BUTTON;
+                }
                 break;
             case MENU:
-                gotoLauncherHome();
+                if (!Constants.MENU_BUTTON.equals(mActiveApp)) {
+                    gotoLauncherHome();
+                    mActiveApp= Constants.MENU_BUTTON;
+                }
                 break;
             case MAP:
-                openPresetApp(mButtonMap.get(Constants.MAP_BUTTON));
+                if (!Constants.MAP_BUTTON.equals(mActiveApp)) {
+                    openPresetApp(mButtonMap.get(Constants.MAP_BUTTON));
+                    mActiveApp= Constants.MAP_BUTTON;
+                }
                 break;
             case AV:
-                openPresetApp(mButtonMap.get(Constants.AV_BUTTON));
+                if (!Constants.AV_BUTTON.equals(mActiveApp)) {
+                    openPresetApp(mButtonMap.get(Constants.AV_BUTTON));
+                    mActiveApp= Constants.AV_BUTTON;
+                }
                 break;
             case MEDIA:
-                openPresetApp(mButtonMap.get(Constants.MEDIA_BUTTON));
+                if (!Constants.MEDIA_BUTTON.equals(mActiveApp)) {
+                    openPresetApp(mButtonMap.get(Constants.MEDIA_BUTTON));
+                    mActiveApp= Constants.MEDIA_BUTTON;
+                }
                 break;
             case REVERSE:
-                if (!mCameraActive) {
-                    ActivityManager am = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-                    mActivityToRestore = am.getRunningTasks(1).get(0).topActivity;
-
+                if (!Constants.REVERSING_CAMERA.equals(mActiveApp)) {
                     openPresetApp(mButtonMap.get(Constants.REVERSING_CAMERA));
-                    mCameraActive = true;
+                    mActiveApp= Constants.REVERSING_CAMERA;
                 }
                 break;
             case FORWARDS:
-                if (mActivityToRestore!=null) {
-                    Intent intent = new Intent();
-                    intent.setAction("android.intent.action.VIEW");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setComponent(mActivityToRestore);
-                    mContext.startActivity(intent);
-                } else {
-                    openDefaultOnBootApp();
-                }
-                mCameraActive = false;
+                openDefaultOnBootApp();
+                mActiveApp = null;
                 //close camera app and revert back to previous
                 break;
         }
@@ -162,8 +166,6 @@ public class SingleIncomingCharManager implements SharedPreferences.OnSharedPref
     private void openPresetApp(ResolveInfo resolveInfo) {
         if (resolveInfo!=null) {
             Intent intent = new Intent();
-            intent.setAction("android.intent.action.VIEW");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setClassName(resolveInfo.activityInfo.applicationInfo.packageName,
                     resolveInfo.activityInfo.name);
             mContext.startActivity(intent);

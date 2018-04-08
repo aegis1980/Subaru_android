@@ -16,56 +16,26 @@ import android.hardware.usb.UsbManager;
 import android.os.IBinder;
 import android.os.ServiceManager;
 
-public class AutostartBroadcastReceiver extends BroadcastReceiver {
+public class BootCompletedBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        SingleIncomingCharManager.getInstance(context).openDefaultOnBootApp();
-
         String action = intent.getAction();
-        if (action != null && action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-            usbPermissionForThisApp(context);
-            usbPermissionsForCameraApp(context);
-            usbPermissionsForEcuApp(context);
-        }
+        assert (action != null && action.equals(Intent.ACTION_BOOT_COMPLETED)) ;
 
+        usbPermissionForThisApp(context);
+        usbPermissionsForEcuApp(context);
+
+        HardwareManager.getInstance(context).openDefaultOnBootApp();
         BackgroundUsbSerialService.start(context);
+//
+        // send broadcast to start Bluetooth GPS service.
+//        Intent gps = new Intent("googoo.android.btgps.action.SERVICE_START");
+//        context.sendBroadcast(gps);
 
 
-    }
 
-    private void usbPermissionsForCameraApp(Context context) {
-
-        try {
-            ResolveInfo ri = SingleIncomingCharManager.getInstance(context).getCameraApp();
-            if (ri != null) {
-                ApplicationInfo ai = ri.activityInfo.applicationInfo;
-
-                if (ai != null) {
-                    UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-                    IBinder b = ServiceManager.getService(Context.USB_SERVICE);
-                    IUsbManager service = IUsbManager.Stub.asInterface(b);
-
-                    HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
-                    Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
-                    while (deviceIterator.hasNext()) {
-                        UsbDevice device = deviceIterator.next();
-                        if (device.getVendorId() != 0x2341 &&
-                                device.getVendorId() != 2341 &&
-                                device.getVendorId() != 0x9025 &&
-                                device.getVendorId() != 9025) {
-                            service.grantDevicePermission(device, ai.uid);
-                            service.setDevicePackage(device, ri.resolvePackageName, ai.uid);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            //trace( e.toString() );
-        }
-
-
+        HardwareManager.getInstance(context).openDefaultOnBootApp();
     }
 
 
@@ -101,7 +71,7 @@ public class AutostartBroadcastReceiver extends BroadcastReceiver {
 
     private void usbPermissionsForEcuApp(Context context){
         try {
-            ResolveInfo ri = SingleIncomingCharManager.getInstance(context).getEcuApp();
+            ResolveInfo ri = HardwareManager.getInstance(context).getEcuApp();
             if (ri != null) {
                 ApplicationInfo ai = ri.activityInfo.applicationInfo;
 
